@@ -1,12 +1,17 @@
 <html>
 <head> <h1 align="left"> Welcome Admin {{femail}} </h1> <head>
-	<body>
+	<body bgcolor="#E6E6FA"> <table border="1" cellpadding="5" cellspacing="5" bordercolor="blue">
+    <tr><th>User only Buttons</th><th>Admin only Buttons</th></tr>
+    <tr><td> 
 	<button align = "right" onclick="window.location.href='/create'">Create Event</button>
-	<button align = "right" onclick="window.location.href='/join'">Join Event</button>
+	<button align = "right" onclick="window.location.href='/join'">Join Event</button></td>
+    <td>
     <button align = "right" onclick="window.location.href='/addvenue'">Add a new Venue</button>
     <button align = "right" onclick="window.location.href='/deletevenue'">Delete a Venue</button>
     <button align = "right" onclick="window.location.href='/deleteevent'">Delete an Event</button>
-    <button align = "right" onclick="window.location.href='/deleteuser'">Delete a User</button>
+    <button align = "right" onclick="window.location.href='/deleteuser'">Delete a User</button></td>
+    </tr>
+    </table>
 	<br><br>
 	<table border="1" cellpadding="5" cellspacing="5">
 	<tr>
