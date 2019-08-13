@@ -1,0 +1,20 @@
+<html>
+<head> 
+</head>
+<body>
+<h3> You Have Registered For: </h3><br>
+	<table border="1" cellpadding="5" cellspacing="5">
+    {% for row in regis %}
+        <tr>
+        {% for d in row %}
+            <td>{{ d }}</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+	</table>
+	<br><br>
+  <form action="" method="post">
+    Enter EventID you want to Unregister from: <input type="number" name="eventidunregis"><br>
+    <input type="submit">
+  </form>
+</body>

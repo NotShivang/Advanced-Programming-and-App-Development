@@ -1,0 +1,19 @@
+<html>
+<body>
+<header>
+    <h1>Delete a Venue</h1>
+  </header>
+  <br>
+  <form action="" method="post">
+  	Venues : <select name="vennames" id = "vennames">
+       <option> Choose You Venue </option>
+       {% for x in vennames %}
+       <option value = '{{x}}'>{{x}}</option>
+       {% endfor %}
+     </select> <br><br>
+     <br><br>
+    <input type="submit">
+  </form>
+</body>
+</html>
+

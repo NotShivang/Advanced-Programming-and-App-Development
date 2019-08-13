@@ -1,0 +1,30 @@
+<html>
+<head></head>
+	<body><br><p align = "center">
+	<button align = "right" onclick="window.location.href='/Login'">Login</button>
+	<button align = "right" onclick="window.location.href='/Signup'">Sign Up</button></p>
+	<h1 align="left"> Events </h1>
+	<table border="1" cellpadding="5" cellspacing="5">
+	<tr>
+        <th>ID</th>
+        <th>Creator</th>
+        <th>Location</th>
+        <th>Tital Capacity</th>
+        <th>Remaining Spots</th>
+        <th>Fees in USD</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Type</th>
+    </tr>
+    {% for row in data %}
+        <tr>
+        {% for d in row %}
+            <td>{{ d }}</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+	</table>
+	<br><br>
+	<button onclick="window.location.href='/Venues'">Venues</button>
+	</body>
+</html>

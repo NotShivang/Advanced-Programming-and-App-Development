@@ -1,0 +1,27 @@
+<html>
+<body>
+<header>
+    <h1>Create an Event</h1>
+  </header>
+  <br>
+  <form action="" method="post">
+  	Venue : <select name="vennames" id = "vennames">
+       <option> Choose You Venue </option>
+       {% for x in vennames %}
+       <option value = '{{x}}'>{{x}}</option>
+       {% endfor %}
+     </select> <br><br>
+    Capacity : <input type="number" name="capacity"><br><br>
+    Remaning Spots: <input type="number" name="remspots"><br><br>
+    Fees (USD) : <input type="number" name="fees"><br><br>
+    Begin Time (2019-08-01 11:00:00): <input type="text" name="bt"><br><br>
+    End Time (2019-08-01 11:00:00): <input type="text" name="et"><br><br>
+    Type : <input type="text" name="type"><br><br>
+
+    <br><br>
+    <input type="submit">
+  </form>
+</body>
+</html>
+
+

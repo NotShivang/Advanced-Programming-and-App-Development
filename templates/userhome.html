@@ -1,0 +1,46 @@
+<html>
+<head> <h1 align="left"> Welcome {{femail}} </h1> <head>
+	<body>
+	<button align = "right" onclick="window.location.href='/create'">Create Event</button>
+	<button align = "right" onclick="window.location.href='/join'">Join Event</button>
+	
+	<br><br>
+	<table border="1" cellpadding="5" cellspacing="5">
+	<tr>
+        <th>ID</th>
+        <th>Creator</th>
+        <th>Location</th>
+        <th>Tital Capacity</th>
+        <th>Remaining Spots</th>
+        <th>Fees in USD</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Type</th>
+    </tr>
+    {% for row in data %}
+        <tr>
+        {% for d in row %}
+            <td>{{ d }}</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+	</table>
+	<br><br>
+	<button onclick="window.location.href='/Venues'">Venues</button><br><br>
+	<h3> You Have Registered For: </h3><br>
+	<table border="1" cellpadding="5" cellspacing="5">
+	<tr>
+        <th>Event ID</th>
+    </tr>
+    {% for row in registeredfor %}
+        
+        {% for d in row %}
+            <td>{{ d }}</td>
+        {% endfor %}
+        
+    {% endfor %}
+	</table>
+	<br>
+	<button align = "right" onclick="window.location.href='/unregister'">Unregister from an event</button>
+	</body>
+</html>
