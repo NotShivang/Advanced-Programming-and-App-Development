@@ -15,7 +15,7 @@
 # [START gae_python37_cloudsql_mysql]
 import os
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify, flash, session, redirect, url_for
 import pymysql
 
 db_user = os.environ.get('CLOUD_SQL_USERNAME')
@@ -57,6 +57,25 @@ def vven():
         
     return render_template('venue.html', data=data)
 
+
+@app.route('/Venues2')
+def vven2():
+    with cnx.cursor() as cursor:
+
+        cursor.execute('SELECT * from Venue;')
+        data = cursor.fetchall()
+        
+    return jsonify(data)
+
+@app.route('/ShowEvent')
+def showevent2():
+    with cnx.cursor() as cursor:
+
+        cursor.execute('SELECT * from Event;')
+        data = cursor.fetchall()
+        
+    return jsonify(data)
+
 @app.route('/Login')
 def tlogin():
     return render_template('Login.html')
@@ -84,6 +103,29 @@ def login():
         else:
             return str("Wrong UserName or Wrong PIN")
 
+@app.route('/Login2', methods=['POST'])
+def login2():
+    global finalemail
+    global admin
+    email = request.form['email']
+    _email = str(email)
+    pwd = request.form['pwd']
+    _pwd = int(pwd)
+    with cnx.cursor() as cursor:
+        cursor.execute('SELECT count(*) from Users where email = %s and password = %s ;',(_email,_pwd))
+        d = cursor.fetchone()
+        cursor.execute('SELECT count(*) from Admin where email = %s;',[_email])
+        admin2 = cursor.fetchone()
+        if(d!=(0,)):
+            finalemail = _email
+            if(admin2!=(0,)):
+                admin = "true"
+                return jsonify({'message':'Admin Confirmed'})
+            else:
+                return jsonify({'message':'User Confirmed'})
+        else:
+            return jsonify({'message':'Wrong UserName or Wrong PIN'})
+
 @app.route('/userhome')
 def tt():
     global finalemail
@@ -94,6 +136,15 @@ def tt():
         registeredfor = cursor.fetchall()
     return render_template('userhome.html', data=data, femail = finalemail, registeredfor = registeredfor)
 
+
+@app.route('/userhome2')
+def tt2():
+    global finalemail
+    with cnx.cursor() as cursor:
+        cursor.execute('SELECT eventid from Registered2 where userid = %s',[finalemail])
+        registeredfor = cursor.fetchall()
+    return jsonify(registeredfor)
+
 @app.route('/adminhome')
 def t():
     global finalemail
@@ -103,6 +154,18 @@ def t():
         cursor.execute('SELECT eventid from Registered2 where userid = %s',[finalemail])
         registeredfor = cursor.fetchall()
     return render_template('adminhome.html', data=data, femail = finalemail, registeredfor = registeredfor)
+
+
+@app.route('/admintemp', methods=['POST'])
+def admintemp():
+    email = str(request.form['email'])
+    name = str(request.form['fname'])
+    with cnx.cursor() as cursor:
+        
+        cursor.execute('''Insert into Admin (name,email) values (%s,%s)''',(name,email))
+        cursor.execute('''commit;''')
+
+    return jsonify({"mess":"Admin Added"})
 
 
 @app.route('/Signup')
@@ -170,6 +233,41 @@ def create():
                 return render_template('thome.html')
         else:
             return("Not Available")
+
+@app.route('/create2', methods=['POST'])
+def create2():
+    global finalemail
+    global admin
+    venue = str(request.form['vennames'])
+    capacity = int(request.form['capacity'])
+    remaining = int(request.form['remspots'])
+    fee =int(request.form['fees'])
+    begin =str(request.form['bt'])
+    end =str(request.form['et'])
+    typ = str(request.form['type'])
+
+    with cnx.cursor() as cursor:
+        cursor.execute('''SELECT venueid FROM Venue where venuename = %s ''',[venue])
+        venueid = int(cursor.fetchone()[0])
+        cursor.execute(''' select availability from VenueSlots2 where datetime2 >= %s and datetime2 <%s AND venueid=%s''', (begin,end,venueid))
+        flag=0
+        for m in cursor.fetchall():
+            if (m==(0,)): 
+                flag=1
+        if(flag==0):
+            cursor.execute('''SELECT EventID FROM Event ORDER BY EventID DESC LIMIT 1 ''')
+            eventid = cursor.fetchone()[0]
+            eventi = eventid+1
+            cursor.execute('''Insert into Event (EventID, EventCreator,Venue,Capacity,RemainingSpots, Fee_USD,Begintime,endtime,Type) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)''',(eventi,finalemail,venue,capacity,remaining,fee,begin,end,typ))
+            cursor.execute('''commit;''')
+            cursor.execute('''Update VenueSlots2 set availability = 0, EventID = %s where venueid = %s and datetime2 between %s and %s''',(eventi,venueid,begin,end))
+            cursor.execute('''commit;''')
+            if(admin=="true"):
+                return jsonify({'message':'Admin Created Event Successfully, Press Back'})
+            else:
+                return jsonify({'message':'User Created Event Successfully, Press Back'})
+        else:
+            return jsonify({'message':'Not Available'})
 
 @app.route('/addvenue')
 def tvenueadd():
@@ -295,6 +393,26 @@ def join():
                 return render_template('thome.html')
         else:
             return("Sorry Event is full")
+
+@app.route('/join2', methods=['POST'])
+def join2():
+    with cnx.cursor() as cursor:
+        global finalemail
+        eventid = int(request.form['eventid'])
+
+        cursor.execute('''select RemainingSpots from Event where EventID = %s''',[eventid])
+        countone = cursor.fetchone()[0]
+        cc = int(countone)
+        if(cc>0):
+            cursor.execute('''insert into Registered2 (eventid,userid) values (%s,%s)''',(eventid,finalemail))
+            cursor.execute('''update Event set RemainingSpots = RemainingSpots -1 where EventID = %s''',[eventid])
+            cursor.execute('''commit;''')
+            if(admin=="true"):
+                return 
+            else:
+                return jsonify({'message':'Successfully joined the Event, Press Back'})
+        else:
+            return jsonify({'message':'No Space in the Event'})
 
 @app.route('/unregister')
 def tunregister():
